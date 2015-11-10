@@ -1,0 +1,38 @@
+{
+  "name": "mesosdns-cli",
+  "version": "0.1.0",
+  "description": "A Node.js-based CLI for querying Mesos DNS service names",
+  "bin": {
+    "mesosdns-cli": "bin/mesosdns-cli"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobilg/mesosdns-cli.git"
+  },
+  "author": "tobilg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tobilg/mesosdns-cli/issues"
+  },
+  "homepage": "https://github.com/tobilg/mesosdns-cli#readme",
+  "keywords": [
+    "Mesos DNS",
+    "DNS",
+    "Mesosphere",
+    "Service Discovery",
+    "http",
+    "agent",
+    "request",
+    "transparent",
+    "resolve"
+  ],
+  "dependencies": {
+    "findup-sync": "^0.3.0",
+    "mesosdns-client": "^0.2.0",
+    "optimist": "^0.6.1"
+  }
+}

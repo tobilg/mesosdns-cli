@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+
+"use strict";
+
+process.title = "mesosdns-cli";
+
+var MesosDNSClient = require("mesosdns-client"),
+    argv = require("optimist").argv,
+    findup = require("findup-sync"),
+    packageJson = require(findup("package.json"));
+
+var defaultPortIndex = 0,
+    serviceName = "",
+    dnsServers = [];
+
+if (argv.help) {
+    console.log("mesosdns-cli v" + packageJson.version + " usage:");
+    console.log("--------------------------");
+    console.log(" ");
+    console.log("Mandatory arguments:");
+    console.log(" ");
+    console.log("--serviceName <service name> : The Mesos DNS service name to be queried");
+    console.log("--servers <comma separated ip addresses> : The Mesos DNS server ip address(es)");
+    console.log(" ");
+    console.log("Other arguments:");
+    console.log(" ");
+    console.log("--portIndex <port index number> : The port index of the service name that should be queried");
+    console.log("--strategy <strategy name> : The strategy how to choose from the list of results (either 'weighted' or  'random')");
+    process.exit(0);
+}
+
+if (argv.portIndex) {
+    defaultPortIndex = parseInt(argv.portIndex);
+}
+
+if (!argv.serviceName) {
+    console.log("You have to at least specify a service name (e.g. --serviceName myservice.framework.mesos)");
+    process.exit(1);
+} else {
+    serviceName = argv.serviceName;
+}
+
+if (!argv.servers && !process.env.MESOSDNS_SERVERS) {
+    console.log("You have to either specify a MESOSDNS_SERVERS environment variable, or the parameter --servers (e.g. --servers 192.168.0.1)");
+    process.exit(1);
+} else {
+
+    var tempServers = argv.servers || process.env.MESOSDNS_SERVERS;
+
+    if (tempServers.length > 7 && tempServers.split(/\./).length > 3) {
+        if (tempServers.indexOf(",") > -1) {
+            dnsServers = tempServers.split(",");
+        } else {
+            dnsServers.push(tempServers);
+        }
+    } else {
+        console.log("Please specify a correct IP address!");
+        process.exit(1);
+    }
+}
+
+var options = {
+    "dnsServers": dnsServers,
+    "defaultPortIndex": defaultPortIndex
+};
+
+if (argv.strategy) {
+    if (argv.strategy === "weighted" || argv.strategy === "random") {
+        options.strategy = argv.strategy;
+    } else {
+        console.log("Please specify a correct strategy (either 'weighted' or  'random')");
+    }
+}
+
+var dnsClient = new MesosDNSClient(options);
+
+dnsClient.get(serviceName, defaultPortIndex, function(err, endpointResult) {
+    console.log(endpointResult.endpoint);
+    process.exit(0);
+});
