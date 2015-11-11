@@ -9,7 +9,9 @@ var MesosDNSClient = require("mesosdns-client"),
 
 var defaultPortIndex = 0,
     serviceName = "",
-    dnsServers = [];
+    dnsServers = [],
+    returnAllEndpoints = false,
+    separator = ",";
 
 if (argv.help) {
     console.log("mesosdns-cli usage:");
@@ -22,6 +24,8 @@ if (argv.help) {
     console.log(" ");
     console.log("Other arguments:");
     console.log(" ");
+    console.log("--all : If provided, all endpoints will be returned in a concatenated manner. Standard separator is a comma, but can be specified by using --separator <separator>");
+    console.log("--separator <separator> : The separator which should be used if the --all option is provided");
     console.log("--portIndex <port index number> : The port index of the service name that should be queried");
     console.log("--strategy <strategy name> : The strategy how to choose from the list of results (either 'weighted' or  'random')");
     process.exit(0);
@@ -29,6 +33,15 @@ if (argv.help) {
 
 if (argv.portIndex) {
     defaultPortIndex = parseInt(argv.portIndex);
+}
+
+if (argv.all) {
+    returnAllEndpoints = true;
+}
+
+if (argv.separator && argv.separator.length > 0) {
+    console.log("sep: " + argv.separator);
+    separator = argv.separator;
 }
 
 if (!argv.serviceName) {
@@ -73,6 +86,33 @@ if (argv.strategy) {
 var dnsClient = new MesosDNSClient(options);
 
 dnsClient.get(serviceName, defaultPortIndex, function(err, endpointResult) {
-    console.log(endpointResult.endpoint);
-    process.exit(0);
+    if (err) {
+        console.error("No valid endpoints returned!");
+        if (err.message) {
+            console.error("Message from mesosdns-client: " + err.message);
+        }
+        process.exit(1);
+    } else {
+        if (endpointResult) {
+            if (returnAllEndpoints) {
+                var endpointStrings = [];
+                if (endpointResult.allEndpoints && Array.isArray(endpointResult.allEndpoints) && endpointResult.allEndpoints.length > 0) {
+                    endpointResult.allEndpoints.forEach(function(endpoint) {
+                        endpointStrings.push(endpoint.host+":"+endpoint.port);
+                    });
+                    console.log(endpointStrings.join(separator));
+                    process.exit(0);
+                } else {
+                    console.error("No valid endpoints returned!");
+                    process.exit(1);
+                }
+            } else {
+                console.log(endpointResult.endpoint);
+                process.exit(0);
+            }
+        } else {
+            console.error("No valid endpoints returned!");
+            process.exit(1);
+        }
+    }
 });
