@@ -5,16 +5,14 @@
 process.title = "mesosdns-cli";
 
 var MesosDNSClient = require("mesosdns-client"),
-    argv = require("optimist").argv,
-    findup = require("findup-sync"),
-    packageJson = require(findup("package.json"));
+    argv = require("optimist").argv;
 
 var defaultPortIndex = 0,
     serviceName = "",
     dnsServers = [];
 
 if (argv.help) {
-    console.log("mesosdns-cli v" + packageJson.version + " usage:");
+    console.log("mesosdns-cli usage:");
     console.log("--------------------------");
     console.log(" ");
     console.log("Mandatory arguments:");
