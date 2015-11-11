@@ -20,6 +20,8 @@ This package can be installed globally via `npm install -g mesosdns-cli`.
 **Other arguments**
 
 ```
+--all : If provided, all endpoints will be returned in a concatenated manner. Standard separator is a comma, but can be specified by using --separator <separator>
+--separator <separator> : The separator which should be used if the --all option is provided
 --portIndex <port index number> : The port index of the service name that should be queried
 --strategy <strategy name> : The strategy how to choose from the list of results (either 'weighted' or  'random')
 ```
