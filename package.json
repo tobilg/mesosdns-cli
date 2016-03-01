@@ -1,6 +1,6 @@
 {
   "name": "mesosdns-cli",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "A Node.js-based CLI for querying Mesos DNS service names",
   "bin": {
     "mesosdns-cli": "bin/mesosdns-cli"
@@ -31,7 +31,7 @@
     "resolve"
   ],
   "dependencies": {
-    "mesosdns-client": "^0.2.0",
+    "mesosdns-client": "0.2.3",
     "optimist": "^0.6.1"
   }
 }
