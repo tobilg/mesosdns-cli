@@ -98,7 +98,11 @@ dnsClient.get(serviceName, defaultPortIndex, function(err, endpointResult) {
                 var endpointStrings = [];
                 if (endpointResult.allEndpoints && Array.isArray(endpointResult.allEndpoints) && endpointResult.allEndpoints.length > 0) {
                     endpointResult.allEndpoints.forEach(function(endpoint) {
-                        endpointStrings.push(endpoint.host+":"+endpoint.port);
+                        if (endpoint.hasOwnProperty("port")) {
+                            endpointStrings.push(endpoint.host+":"+endpoint.port);
+                        } else {
+                            endpointStrings.push(endpoint.host);
+                        }
                     });
                     console.log(endpointStrings.join(separator));
                     process.exit(0);
